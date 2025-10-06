@@ -10,7 +10,10 @@
 #@gui Dream Smoothing Enhanced : fx_dream_smoothing_enhanced, fx_dream_smoothing_enhanced_preview(1)
 #@gui : sep = separator()
 #@gui : note = note("<b>Dream Smoothing Enhanced</b>")
-#@gui : note = note("<small>Based on Dream Smoothing by Arto Huotari | Designed by Zarir Madon<br>Coded with Claude Sonnet (October 2025) | Licensed under GPL v3</small>")
+#@gui : note = note("<small>Filter Design: Zarir Madon ,      Coded with: Claude Sonnet 4.5      [October 11, 2025]      </small>")
+#@gui : note = note("<small>Based on the original Dream Smoothing algorithm by Arto Huotari</small>")
+#@gui : note = note("<small>G'MIC Framework: David Tschumperlé and contributors</small>")
+#@gui : note = note("<small><b>License:</b> This filter is licensed under the GNU General Public License v3.0</small>")
 #@gui : sep = separator()
 #@gui : note = note("<b>Core Smoothing</b>")
 #@gui : Iterations = int(3,1,10)
@@ -35,12 +38,6 @@
 #@gui : Soft Light = float(0,0,100)
 #@gui : Halo = float(0,0,100)
 #@gui : sep = separator()
-#@gui : note = note("<b>Artistic Styles</b>")
-#@gui : Oil Painting = float(0,0,15)
-#@gui : Watercolor = float(0,0,15)
-#@gui : Impressionist = float(0,0,15)
-#@gui : Sketch = float(0,0,15)
-#@gui : sep = separator()
 #@gui : note = note("<b>Color</b>")
 #@gui : Brightness = float(0,-100,100)
 #@gui : Contrast = float(0,-100,100)
@@ -51,6 +48,9 @@
 #@gui : Vignette = float(0,0,100)
 #@gui : Fog = float(0,0,100)
 #@gui : Grain = float(0,0,100)
+#@gui : sep = separator()
+#@gui : note = note("<b>Preview Quality</b>")
+#@gui : Preview Quality = choice(1,"Draft","Normal","High Quality")
 #@gui : sep = separator()
 #@gui : Preview Type = choice("Full","Forward Horizontal","Forward Vertical","Backward Horizontal","Backward Vertical","Duplicate Top","Duplicate Left","Duplicate Bottom","Duplicate Right")
 #@gui : Preview Split = point(50,50,0,0,200,200,200,0,10)_0
@@ -72,17 +72,13 @@ fx_dream_smoothing_enhanced :
   glow=${12}
   soft_light=${13}
   halo=${14}
-  oil=${15}
-  watercolor=${16}
-  impressionist=${17}
-  sketch=${18}
-  brightness=${19}
-  contrast=${20}
-  saturation=${21}
-  hue_shift=${22}
-  vignette=${23}
-  fog=${24}
-  grain=${25}
+  brightness=${15}
+  contrast=${16}
+  saturation=${17}
+  hue_shift=${18}
+  vignette=${19}
+  fog=${20}
+  grain=${21}
 
   # Core dream smoothing loop
   repeat $iterations
@@ -111,38 +107,6 @@ fx_dream_smoothing_enhanced :
     blur. {$halo/2}
     n. 0,255
     blend screen,{$halo/300},0
-  fi
-
-  # Oil painting
-  if $oil>0.5
-    kuwahara {$oil*2}
-  fi
-
-  # Watercolor
-  if $watercolor>0.5
-    repeat {max(1,round($watercolor/3))}
-      bilateral {$watercolor*3},{$watercolor*5},0,0
-    done
-    if $watercolor>2
-      +quantize {max(16,128-$watercolor*5)},0,1
-      blend normal,{$watercolor/18},0
-    fi
-  fi
-
-  # Impressionist
-  if $impressionist>0.5
-    kuwahara {$impressionist*2}
-    +noise {$impressionist*0.8}%,0
-    blur. {$impressionist/2}
-    blend overlay,{$impressionist/45},0
-  fi
-
-  # Sketch
-  if $sketch>0.5
-    +gradient_norm
-    negate.
-    n. 0,255
-    blend multiply,{$sketch/40},0
   fi
 
   # Vignette
@@ -179,11 +143,30 @@ fx_dream_smoothing_enhanced :
   c 0,255
 
 fx_dream_smoothing_enhanced_preview :
+  preview_quality=${22}
   w_orig={w}
-  if $w_orig>800
-    resize2dx 50%,2
-  fi
-  fx_dream_smoothing_enhanced $*
-  if w<$w_orig
-    resize2dx $w_orig,5
+  h_orig={h}
+
+  # Apply quality-based scaling
+  if $preview_quality==0
+    # Draft: 25% size
+    if $w_orig>800||$h_orig>800
+      resize2dx 25%,2
+      fx_dream_smoothing_enhanced ${1-21}
+      resize2dx. $w_orig,5
+    else
+      fx_dream_smoothing_enhanced ${1-21}
+    fi
+  elif $preview_quality==1
+    # Normal: 50% size
+    if $w_orig>800
+      resize2dx 50%,2
+      fx_dream_smoothing_enhanced ${1-21}
+      resize2dx. $w_orig,5
+    else
+      fx_dream_smoothing_enhanced ${1-21}
+    fi
+  else
+    # High Quality: full resolution
+    fx_dream_smoothing_enhanced ${1-21}
   fi
