@@ -29,12 +29,6 @@ Dream Smoothing Enhanced is a comprehensive artistic filter based on the origina
 - **Soft Light** - Subtle light diffusion for atmospheric quality
 - **Halo Effect** - Bright area enhancement with controllable bloom
 
-### Artistic Styles
-- **Oil Painting** - Kuwahara filter for painterly effects
-- **Watercolor** - Color quantization with edge preservation
-- **Impressionist** - Brush stroke simulation with texture overlay
-- **Sketch Lines** - Edge detection with multiply blend
-
 ### Color & Atmosphere
 - **Full color controls** - Brightness, contrast, saturation, hue shift
 - **Vignette** - Soft edge darkening
@@ -83,9 +77,6 @@ gmic input.jpg fx_dream_smoothing_enhanced 3,430,0.8,0.4,0.5,0.6,2,0.4,1,0.6,4,0
 # With glow effect
 gmic input.jpg fx_dream_smoothing_enhanced 3,430,0.8,0.4,0.5,0.6,2,0.4,1,0.6,4,50,0,0,0,0,0,0,0,0,0,0,0,0,0 -o glowing.jpg
 
-# Oil painting style
-gmic input.jpg fx_dream_smoothing_enhanced 3,430,0.8,0.4,0.5,0.6,2,0.4,1,0.6,4,0,0,0,10,0,0,0,0,0,0,0,0,0,0 -o oil.jpg
-```
 
 ## Parameters
 
@@ -118,14 +109,6 @@ gmic input.jpg fx_dream_smoothing_enhanced 3,430,0.8,0.4,0.5,0.6,2,0.4,1,0.6,4,0
 | Ethereal Glow | 0-100 | 0 | Screen blend luminosity |
 | Soft Light | 0-100 | 0 | Soft light diffusion |
 | Halo | 0-100 | 0 | Bright area bloom |
-
-### Artistic Styles
-| Parameter | Range | Default | Description |
-|-----------|-------|---------|-------------|
-| Oil Painting | 0-15 | 0 | Kuwahara filter strength |
-| Watercolor | 0-15 | 0 | Color reduction intensity |
-| Impressionist | 0-15 | 0 | Brush stroke effect |
-| Sketch | 0-15 | 0 | Edge line overlay |
 
 ### Color
 | Parameter | Range | Default | Description |
@@ -168,11 +151,6 @@ gmic input.jpg fx_dream_smoothing_enhanced 2,350,0.75,0.4,0.5,0.6,2,0.4,1,0.6,4,
 gmic input.jpg fx_dream_smoothing_enhanced 5,600,0.9,0.3,0.4,0.6,2,0.3,1.2,0.6,4,60,45,30,0,0,0,0,12,5,15,0,30,25,15 -o ethereal.jpg
 ```
 
-### Oil Painting Style
-```bash
-gmic input.jpg fx_dream_smoothing_enhanced 3,450,0.8,0.4,0.5,0.6,2,0.4,1,0.6,4,25,20,15,10,0,0,0,8,8,12,0,0,20,10 -o oil.jpg
-```
-
 ## Technical Details
 
 ### Algorithm
@@ -210,7 +188,7 @@ This is inherent to the algorithm and cannot be significantly optimized without 
 ## Known Issues
 
 - Processing time is long on large images (inherent to algorithm)
-- Preview may show Draft quality for responsiveness
+- Preview Draft / Normal / High Quality - select Draft quality for responsiveness
 - Very high parameter values may cause out-of-memory errors on large images
 
 ## Development
@@ -271,7 +249,6 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
 - Initial release
 - Full parameter exposure
 - 25 adjustable parameters
-- Multiple artistic styles
 - Atmospheric effects
 - Fine-grain control
 
